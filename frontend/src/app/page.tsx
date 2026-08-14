@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import {
   ShieldAlert,
   LayoutDashboard,
@@ -11,7 +11,6 @@ import {
   RefreshCw,
   AlertTriangle,
   Zap,
-  CheckCircle2,
   Sliders,
   Flame,
   RadioTower,
@@ -20,8 +19,7 @@ import {
   Search,
   UserPlus,
   Check,
-  X,
-  TrendingDown
+  X
 } from 'lucide-react';
 import {
   Chart as ChartJS,
@@ -239,7 +237,7 @@ export default function Dashboard() {
     m.status.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Chart Data
+  // Chart Data (High Contrast Light Theme)
   const recentReadings = [...readings].slice(-10);
   const chartData = {
     labels: recentReadings.map(r => new Date(r.timestamp).toLocaleTimeString()),
@@ -247,8 +245,8 @@ export default function Dashboard() {
       {
         label: 'Phase Current (Ip)',
         data: recentReadings.map(r => r.phaseCurrent),
-        borderColor: '#00d4ff',
-        backgroundColor: 'rgba(0,212,255,0.08)',
+        borderColor: '#2563eb',
+        backgroundColor: 'rgba(37,99,235,0.06)',
         fill: true,
         tension: 0.4,
         borderWidth: 2,
@@ -257,7 +255,7 @@ export default function Dashboard() {
       {
         label: 'Neutral Current (In)',
         data: recentReadings.map(r => r.neutralCurrent),
-        borderColor: '#b44fff',
+        borderColor: '#7c3aed',
         backgroundColor: 'transparent',
         fill: false,
         tension: 0.4,
@@ -267,8 +265,8 @@ export default function Dashboard() {
       {
         label: '|Δ| Disparity (A)',
         data: recentReadings.map(r => Math.abs(r.phaseCurrent - r.neutralCurrent)),
-        borderColor: '#ff3b6b',
-        backgroundColor: 'rgba(255,59,107,0.08)',
+        borderColor: '#dc2626',
+        backgroundColor: 'rgba(220,38,38,0.06)',
         fill: true,
         tension: 0.1,
         borderWidth: 2,
@@ -284,28 +282,28 @@ export default function Dashboard() {
     plugins: {
       legend: {
         labels: {
-          color: '#8ba4c8',
-          font: { family: 'Inter', size: 11 },
+          color: '#334155',
+          font: { family: 'Plus Jakarta Sans', size: 11, weight: 600 as const },
           boxWidth: 12
         }
       },
       tooltip: {
-        backgroundColor: '#0d1526',
-        borderColor: 'rgba(255,255,255,0.1)',
+        backgroundColor: '#0f172a',
+        borderColor: '#e2e8f0',
         borderWidth: 1,
-        titleColor: '#f0f6ff',
-        bodyColor: '#8ba4c8',
+        titleColor: '#ffffff',
+        bodyColor: '#94a3b8',
         padding: 12
       }
     },
     scales: {
       x: {
-        grid: { color: 'rgba(255,255,255,0.04)' },
-        ticks: { color: '#4a6080', font: { family: 'monospace', size: 10 } }
+        grid: { color: 'rgba(15,23,42,0.06)' },
+        ticks: { color: '#64748b', font: { family: 'monospace', size: 10 } }
       },
       y: {
-        grid: { color: 'rgba(255,255,255,0.04)' },
-        ticks: { color: '#4a6080', font: { family: 'monospace', size: 10 } }
+        grid: { color: 'rgba(15,23,42,0.06)' },
+        ticks: { color: '#64748b', font: { family: 'monospace', size: 10 } }
       }
     }
   };
@@ -319,8 +317,8 @@ export default function Dashboard() {
             <ShieldAlert />
           </div>
           <div>
-            <div className="brand-name"><span>VoltGuard</span></div>
-            <div className="brand-sub">Grid Security</div>
+            <div className="brand-name"><span>Volt</span>Guard</div>
+            <div className="brand-sub">Govt Power Security</div>
           </div>
         </div>
 
@@ -369,9 +367,9 @@ export default function Dashboard() {
         <div className="sidebar-footer">
           <div className="system-online">
             <div className="pulse-ring" />
-            System Online
+            Substation Online
           </div>
-          <div className="server-info">localhost:8085 · H2 In-Memory</div>
+          <div className="server-info">Division 392263 · H2 DB</div>
         </div>
       </aside>
 
@@ -380,8 +378,8 @@ export default function Dashboard() {
         {/* TOPBAR */}
         <header className="topbar">
           <div className="topbar-title">
-            <h2>Substation Monitoring Console</h2>
-            <p>Real-time anti-tampering surveillance and energy analytics</p>
+            <h2>State Power Distribution Corporation</h2>
+            <p>Substation Division 392263 · Anti-Tampering & Grid Surveillance Portal</p>
           </div>
           <div className="topbar-right">
             <div className="topbar-time">{clock}</div>
@@ -402,29 +400,27 @@ export default function Dashboard() {
           <div className="kpi-grid">
             <div className="kpi-card">
               <div className="kpi-top">
-                <div className="kpi-icon cyan">
+                <div className="kpi-icon blue">
                   <Cpu />
                 </div>
-                <div className="kpi-trend up">Live</div>
+                <div className="kpi-trend up">ACTIVE</div>
               </div>
               <div>
                 <div className="kpi-value">{meters.length}</div>
                 <div className="kpi-label">Total Monitored Meters</div>
-                <div className="kpi-sparkline"><div className="kpi-sparkline-fill cyan" /></div>
               </div>
             </div>
 
-            <div className="kpi-card danger-glow">
+            <div className="kpi-card danger-card">
               <div className="kpi-top">
                 <div className="kpi-icon red">
                   <AlertTriangle />
                 </div>
-                <div className="kpi-trend down">ALERT</div>
+                <div className="kpi-trend down">CRITICAL</div>
               </div>
               <div>
-                <div className="kpi-value" style={{ color: 'var(--volt-red)' }}>{tamperedCount}</div>
+                <div className="kpi-value" style={{ color: 'var(--gov-alert)' }}>{tamperedCount}</div>
                 <div className="kpi-label">Tampered / Flagged Meters</div>
-                <div className="kpi-sparkline"><div className="kpi-sparkline-fill red" /></div>
               </div>
             </div>
 
@@ -433,12 +429,11 @@ export default function Dashboard() {
                 <div className="kpi-icon green">
                   <Zap />
                 </div>
-                <div className="kpi-trend up">Stable</div>
+                <div className="kpi-trend up">STABLE</div>
               </div>
               <div>
                 <div className="kpi-value">{avgVoltage} V</div>
                 <div className="kpi-label">Average Grid Voltage</div>
-                <div className="kpi-sparkline"><div className="kpi-sparkline-fill green" /></div>
               </div>
             </div>
 
@@ -451,7 +446,6 @@ export default function Dashboard() {
               <div>
                 <div className="kpi-value">{activeWorkOrders.length}</div>
                 <div className="kpi-label">Active Work Orders</div>
-                <div className="kpi-sparkline"><div className="kpi-sparkline-fill purple" /></div>
               </div>
             </div>
           </div>
@@ -464,7 +458,7 @@ export default function Dashboard() {
               <div className="panel">
                 <div className="panel-header">
                   <div className="panel-title">
-                    <Sliders style={{ color: 'var(--volt-amber)' }} />
+                    <Sliders style={{ color: 'var(--gov-amber)' }} />
                     <h3>Telemetry Simulator</h3>
                   </div>
                   <button className="btn btn-amber btn-sm" onClick={loadTamperPreset}>
@@ -553,7 +547,7 @@ export default function Dashboard() {
               <div className="panel">
                 <div className="panel-header">
                   <div className="panel-title">
-                    <Wrench style={{ color: 'var(--volt-red)' }} />
+                    <Wrench style={{ color: 'var(--gov-alert)' }} />
                     <h3>Active Work Orders</h3>
                   </div>
                   <span className="tag red">{activeWorkOrders.length} Open</span>
@@ -611,10 +605,10 @@ export default function Dashboard() {
               <div className="panel">
                 <div className="panel-header">
                   <div className="panel-title">
-                    <TrendingUp style={{ color: 'var(--volt-cyan)' }} />
-                    <h3>Current Disparity Trend</h3>
+                    <TrendingUp style={{ color: 'var(--gov-blue)' }} />
+                    <h3>Current Disparity Analysis</h3>
                   </div>
-                  <span className="tag cyan">Last 10 readings</span>
+                  <span className="tag blue">Recent 10 Pings</span>
                 </div>
                 <div className="panel-body">
                   <div className="chart-wrap">
@@ -627,15 +621,15 @@ export default function Dashboard() {
               <div className="panel">
                 <div className="panel-header">
                   <div className="panel-title">
-                    <Cpu style={{ color: 'var(--volt-purple)' }} />
+                    <Cpu style={{ color: 'var(--gov-purple)' }} />
                     <h3>Meter Inventory</h3>
                   </div>
                   <div className="search-wrap">
                     <Search className="search-icon" />
                     <input
                       className="form-input"
-                      style={{ width: '200px', paddingLeft: '32px' }}
-                      placeholder="Search meters..."
+                      style={{ width: '200px', paddingLeft: '30px' }}
+                      placeholder="Search badge ID..."
                       value={searchQuery}
                       onChange={e => setSearchQuery(e.target.value)}
                     />
@@ -659,7 +653,7 @@ export default function Dashboard() {
                       ) : (
                         filteredMeters.map(m => (
                           <tr key={m.id}>
-                            <td className="mono" style={{ fontWeight: 600, color: 'var(--volt-cyan)' }}>{m.meterId}</td>
+                            <td className="mono" style={{ fontWeight: 700, color: 'var(--gov-blue)' }}>{m.meterId}</td>
                             <td>
                               <span className={`badge-status ${m.status === 'FLAGGED_TAMPERED' ? 'tampered' : 'active'}`}>
                                 {m.status}
@@ -686,8 +680,8 @@ export default function Dashboard() {
               <div className="panel">
                 <div className="panel-header">
                   <div className="panel-title">
-                    <Activity style={{ color: 'var(--volt-green)' }} />
-                    <h3>Live Telemetry Log</h3>
+                    <Activity style={{ color: 'var(--gov-success)' }} />
+                    <h3>Live Telemetry Feed</h3>
                   </div>
                   <span className="tag green">{readings.length} entries</span>
                 </div>
