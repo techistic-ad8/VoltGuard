@@ -52,8 +52,13 @@ const Dashboard = () => {
         </Box>
 
         <Grid container spacing={3}>
-          {/* Telemetry Simulator */}
-          <Grid item xs={12} lg={4}>
+          {/* Current Disparity Chart (7) */}
+          <Grid item xs={12} lg={7}>
+            <CurrentDisparityChart readings={readings} />
+          </Grid>
+
+          {/* Telemetry Simulator (5) */}
+          <Grid item xs={12} lg={5}>
             <TelemetrySimulator
               meters={meters}
               selectedMeterId={selectedMeterId}
@@ -62,22 +67,17 @@ const Dashboard = () => {
             />
           </Grid>
 
-          {/* Current Disparity Chart */}
-          <Grid item xs={12} lg={8}>
-            <CurrentDisparityChart readings={readings} />
-          </Grid>
-
-          {/* Active Work Orders */}
+          {/* Active Work Orders (4) */}
           <Grid item xs={12} lg={4} id="work-orders">
             <WorkOrdersPanel workOrders={workOrders} onRefresh={fetchData} />
           </Grid>
 
-          {/* Meter Inventory Table */}
+          {/* Meter Inventory Table (8) */}
           <Grid item xs={12} lg={8} id="meters">
             <MeterInventoryTable meters={meters} onSelectMeter={id => setSelectedMeterId(id)} />
           </Grid>
 
-          {/* Live Telemetry Feed */}
+          {/* Live Telemetry Feed (12) */}
           <Grid item xs={12} id="telemetry">
             <LiveTelemetryLog readings={readings} />
           </Grid>

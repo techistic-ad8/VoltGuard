@@ -48,6 +48,13 @@ This document contains a log of all modifications, updates, and files added duri
   * Rounded `phaseCurrent`, `neutralCurrent`, and `Math.abs(phaseCurrent - neutralCurrent)` values to 2 decimal places.
   * Replaced raw math expression in card subtitle with clean text (`|Ip - In|`).
 
+### 6. Spacious Telemetry Simulator & Dashboard Grid Layout Redesign
+* **[REDESIGN] [TelemetrySimulator.js](file:///d:/Springboot%20Project/frontend1/src/views/dashboard/components/TelemetrySimulator.js)**:
+  * Replaced cramped floating labels inside input fields with dedicated top labels (`Typography variant="caption"`), eliminating text truncation on fields like Phase Current Ip (A) and Neutral Current In (A).
+  * Added rounded border inputs (`10px`), status Chips in meter badge dropdown menu, and a full-width gradient submit button (`#2563eb` to `#1d4ed8`).
+* **[LAYOUT] [Dashboard.js](file:///d:/Springboot%20Project/frontend1/src/views/dashboard/Dashboard.js)**:
+  * Re-allocated Grid columns: increased `TelemetrySimulator` from 4 to 5 columns (`lg={5}`) and paired it side-by-side with `CurrentDisparityChart` (`lg={7}`) for a spacious layout.
+
 ---
 
 ## Individual Git Commits Record
@@ -66,3 +73,4 @@ This document contains a log of all modifications, updates, and files added duri
 13. `feat(frontend): remove AdminMart promotional elements and apply full VoltGuard branding`
 14. `c56dbd2` - `feat(frontend): remove top headbar, update logo to reference design, and implement collapsible menu`
 15. `fix(frontend): format CurrentDisparityChart Y-axis labels to fixed decimals`
+16. `refactor(frontend): expand TelemetrySimulator layout to eliminate claustrophobic form fields`
