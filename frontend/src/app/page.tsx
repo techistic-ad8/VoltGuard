@@ -71,7 +71,7 @@ interface WorkOrder {
   createdAt: string;
 }
 
-const API_BASE = 'http://localhost:8085/api';
+const API_BASE = '/api';
 
 export default function Dashboard() {
   const [meters, setMeters] = useState<Meter[]>([]);
@@ -112,17 +112,23 @@ export default function Dashboard() {
     return () => clearInterval(timer);
   }, []);
 
-  // Fetch Data
+  // Fetch Data (Bypass Next.js Data Cache)
   const fetchData = async () => {
     try {
       const [mRes, rRes, wRes] = await Promise.all([
-        fetch(`${API_BASE}/meters`).then(res => res.json()),
-        fetch(`${API_BASE}/readings`).then(res => res.json()),
-        fetch(`${API_BASE}/work-orders`).then(res => res.json())
+        fetch(`${API_BASE}/meters`, { cache: 'no-store' }).then(res => res.json()),
+        fetch(`${API_BASE}/readings`, { cache: 'no-store' }).then(res => res.json()),
+        fetch(`${API_BASE}/work-orders`, { cache: 'no-store' }).then(res => res.json())
       ]);
-      setMeters(mRes);
-      setReadings(rRes);
-      setWorkOrders(wRes);
+
+      if (Array.isArray(mRes)) {
+        setMeters(mRes);
+        if (mRes.length > 0 && !selectedMeterId) {
+          setSelectedMeterId(mRes[0].meterId);
+        }
+      }
+      if (Array.isArray(rRes)) setReadings(rRes);
+      if (Array.isArray(wRes)) setWorkOrders(wRes);
     } catch (err) {
       console.error('Failed to fetch dashboard data:', err);
     }
@@ -130,7 +136,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     fetchData();
-    const interval = setInterval(fetchData, 5000);
+    const interval = setInterval(fetchData, 3000); // 3 second polling
     return () => clearInterval(interval);
   }, []);
 
@@ -237,7 +243,7 @@ export default function Dashboard() {
     m.status.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Chart Data (High Contrast Light Theme)
+  // Chart Data
   const recentReadings = [...readings].slice(-10);
   const chartData = {
     labels: recentReadings.map(r => new Date(r.timestamp).toLocaleTimeString()),
