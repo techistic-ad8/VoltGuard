@@ -74,9 +74,21 @@ Updates a work order's assigned engineer or status.
 
 ---
 
-## 4. Modernize-React-Lite Material-UI Dashboard (`/modernize-react-lite-main/package`)
-* **Framework**: React 19, Vite, Material-UI v9 (`@mui/material`), ApexCharts (`react-apexcharts`), Tabler Icons (`@tabler/icons-react`).
-* **Location**: `d:\Springboot Project\modernize-react-lite-main\package\`
+## 4. Modernize-React-Lite Material-UI Dashboard (`/frontend1`)
+
+VoltGuard includes a modern React 19 + Material-UI 6 dashboard configured with Vite.
+
+* **Location**: `d:\Springboot Project\frontend1\`
+* **Port**: `http://localhost:5173`
+* **Vite Proxy**: `/api` calls are proxied to `http://localhost:8085`
+
+### Running the Frontend
+```bash
+cd frontend1
+npm install
+npm run dev
+```
+
 * **Custom Modules**:
   - `CurrentDisparityChart.js`: ApexCharts smooth curves rendering $I_p$, $I_n$, and $|I_p - I_n|$.
   - `TamperAlertSummary.js`: MUI Stat Cards for Total Monitored Meters, Tampered Meters, Grid Voltage, and Active Work Orders.
