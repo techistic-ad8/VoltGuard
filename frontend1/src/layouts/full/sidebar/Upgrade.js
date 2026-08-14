@@ -1,26 +1,30 @@
 import React from 'react';
-import { Box, Typography, Button } from '@mui/material';
-import img1 from 'src/assets/images/backgrounds/rocket.png';
+import { Box, Typography, Chip } from '@mui/material';
+import { IconShieldCheck } from '@tabler/icons-react';
 
 const Upgrade = () => {
     return (
         <Box
             display={'flex'}
-            alignItems="center"
-            gap={2}
-            sx={{ my: 3, p: 3, bgcolor: `${'primary.light'}`, borderRadius: '8px' }}
+            flexDirection="column"
+            gap={1}
+            sx={{ my: 3, p: 2.5, bgcolor: 'primary.light', borderRadius: '12px', border: '1px solid rgba(37, 99, 235, 0.2)' }}
         >
-            <>
-                <Box>
-                    <Typography variant="h6" mb={1}>Check Pro Version</Typography>
-                    <Button color="primary" target="_blank" href="https://adminmart.com/product/modernize-react-mui-dashboard-template/?ref=56#product-demo-section" variant="contained" aria-label="logout" size="small">
-                        Check
-                    </Button>
-                </Box>
-                <Box sx={{marginTop:"-35px",marginRight: "-24px"}}>
-                    <img alt="Remy Sharp" src={img1} width={100} />
-                </Box>
-            </>
+            <Box display="flex" alignItems="center" gap={1}>
+                <IconShieldCheck size={20} color="#2563eb" />
+                <Typography variant="h6" fontSize={14} fontWeight={700} color="primary.main">
+                    VoltGuard Security
+                </Typography>
+            </Box>
+            <Typography variant="caption" color="textSecondary" lineHeight={1.3}>
+                Substation Tamper Detection & Telemetry Engine
+            </Typography>
+            <Chip 
+                label="System Active" 
+                color="success" 
+                size="small" 
+                sx={{ mt: 1, height: 22, fontSize: 11, fontWeight: 700, width: 'fit-content' }} 
+            />
         </Box>
     );
 };

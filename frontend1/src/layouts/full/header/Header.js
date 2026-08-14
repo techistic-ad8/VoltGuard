@@ -16,7 +16,8 @@ import PropTypes from 'prop-types'
 
 // components
 import Profile from './Profile'
-import { IconBellRinging, IconMenu } from '@tabler/icons-react'
+import { IconBellRinging, IconMenu, IconShieldCheck } from '@tabler/icons-react'
+import { Chip } from '@mui/material'
 
 const Header = (props) => {
   const AppBarStyled = styled(AppBar)(({ theme }) => ({
@@ -100,22 +101,23 @@ const Header = (props) => {
               },
             }}>
             <MenuItem onClick={handleClose}>
-              <Typography variant='body1'>Item 1</Typography>
+              <Typography variant='body1'>Grid Alert: Phase Imbalance</Typography>
             </MenuItem>
             <MenuItem onClick={handleClose}>
-              <Typography variant='body1'>Item 2</Typography>
+              <Typography variant='body1'>Tamper Event Registered</Typography>
             </MenuItem>
           </Menu>
         </Box>
         <Box flexGrow={1} />
         <Stack spacing={1} direction='row' alignItems='center'>
-          <Button
-            variant='contained'
-            color='primary'
-            target='_blank'
-            href='https://adminmart.com/product/modernize-react-mui-dashboard-template/?ref=56#product-demo-section'>
-            Check Pro Template
-          </Button>
+          <Chip
+            icon={<IconShieldCheck size={16} />}
+            label="Grid Surveillance Active"
+            color="success"
+            variant="outlined"
+            size="small"
+            sx={{ fontWeight: 600, borderRadius: '6px', px: 1 }}
+          />
           <Profile />
         </Stack>
       </ToolbarStyled>

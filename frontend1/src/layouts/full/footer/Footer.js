@@ -5,12 +5,8 @@ import { Link } from "react-router";
 const Footer = () => {
     return (
         <Box sx={{ pt: 6, pb: 3, textAlign: "center" }}>
-            <Typography>
-                © {new Date().getFullYear()} All rights reserved by{" "}
-                <Link to="https://adminmart.com">
-                    <Typography color='primary.main' component='span'>
-                        AdminMart.com</Typography>
-                </Link>{" "}
+            <Typography variant="body2" color="textSecondary">
+                © {new Date().getFullYear()} VoltGuard Smart Energy Surveillance System. Power Grid Security Division.
             </Typography>
         </Box>
     );

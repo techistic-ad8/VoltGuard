@@ -25,7 +25,12 @@ This document contains a log of all modifications, updates, and files added duri
 * **[MODIFY] [vite.config.js](file:///d:/Springboot%20Project/frontend1/vite.config.js)**:
   * Updated `load-js-files-as-jsx` esbuild plugin filter regex from `/src\\.*\.js$/` to `/src[\\/].*\.js$/` to ensure path matching works smoothly across both Windows backslashes and normalized forward slashes.
   * Added `host: true` to Vite dev server config.
-* **[FIX] Re-installed Node binaries and dependencies**: Executed `npm install` in `frontend1/` to recreate missing `.bin/vite` binaries. Updated `@mui/material`, `@mui/icons-material`, `@mui/system`, and `@mui/lab` from invalid/experimental `v9.0.1` tags to stable release `v6.4.3+`, resolving module import entry resolution errors.
+* **[BRANDING] Removed AdminMart & Modernize template promotional elements**:
+  * Removed top `Topbar` promo bar ("AdminMart | Templates | Help | Hire Us ... CHECKOUT PRO VERSION") from `FullLayout.js`.
+  * Updated top `Header.js` right section to display a `Grid Surveillance Active` status badge instead of template upgrade buttons.
+  * Updated `Upgrade.js` sidebar card to display `VoltGuard Security: Substation Tamper Detection & Telemetry Engine`.
+  * Updated `Footer.js` to `© 2026 VoltGuard Smart Energy Surveillance System. Power Grid Security Division.`
+  * Updated `index.html` page title to `VoltGuard | Smart Meter & Power Grid Security System`.
 
 ---
 
@@ -41,4 +46,5 @@ This document contains a log of all modifications, updates, and files added duri
 9. `9bd3126` - `feat(modernize): integrate VoltGuard components into Dashboard view`
 10. `5185c2a` - `docs: update master documentation and changelog for Modernize dashboard`
 11. `95926f7` - `feat(frontend): restructure react app to frontend1 and fix vite dev server launch`
-12. `fix(frontend): update MUI dependency versions to stable v6.4.3`
+12. `f06ccc5` - `fix(frontend): update MUI dependency versions to stable v6.4.3`
+13. `feat(frontend): remove AdminMart promotional elements and apply full VoltGuard branding`
