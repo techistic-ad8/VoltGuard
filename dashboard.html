@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>VoltGuard — Grid Protection Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0e13;
+    --panel:#121820;
+    --panel-alt:#161e27;
+    --border:#232d38;
+    --border-soft:#1a222b;
+    --text-primary:#e7ecf1;
+    --text-muted:#7c8896;
+    --text-faint:#4c5866;
+    --cyan:#4fd8e8;
+    --cyan-dim:#1f5b63;
+    --amber:#f2a93b;
+    --amber-dim:#5c4520;
+    --red:#ff5a5f;
+    --red-dim:#5c2225;
+    --green:#3ed598;
+    --green-dim:#1c4a3a;
+    --font-display:'Oswald', sans-serif;
+    --font-body:'IBM Plex Sans', sans-serif;
+    --font-mono:'IBM Plex Mono', monospace;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text-primary);
+    font-family:var(--font-body);
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+    background-image:
+      linear-gradient(var(--border-soft) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border-soft) 1px, transparent 1px);
+    background-size:36px 36px;
+    background-position:-1px -1px;
+  }
+
+  a{color:inherit;}
+  :focus-visible{outline:2px solid var(--cyan); outline-offset:2px;}
+
+  .wrap{max-width:1400px; margin:0 auto; padding:0 20px 64px;}
+
+  /* ---------- HEADER ---------- */
+  header{
+    position:relative;
+    padding:28px 20px 22px;
+    border-bottom:1px solid var(--border);
+    overflow:hidden;
+    background:linear-gradient(180deg, rgba(79,216,232,0.05), transparent 70%);
+  }
+  .header-inner{max-width:1400px; margin:0 auto; position:relative; z-index:2; display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap;}
+  .brandblock{display:flex; align-items:center; gap:14px;}
+  .brand-mark{
+    width:38px; height:38px; border:1.5px solid var(--cyan);
+    border-radius:3px; display:flex; align-items:center; justify-content:center;
+    position:relative; flex-shrink:0;
+  }
+  .brand-mark::before{
+    content:"";
+    width:10px; height:10px;
+    background:var(--cyan);
+    clip-path:polygon(45% 0, 100% 0, 40% 60%, 65% 60%, 20% 100%, 30% 45%, 0 45%);
+    box-shadow:0 0 8px var(--cyan);
+  }
+  h1{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:26px;
+    letter-spacing:2px;
+    margin:0;
+    text-transform:uppercase;
+  }
+  .subtitle{
+    font-family:var(--font-mono);
+    font-size:11px;
+    color:var(--text-muted);
+    letter-spacing:1px;
+    margin-top:3px;
+  }
+  .header-status{display:flex; align-items:center; gap:10px; font-family:var(--font-mono); font-size:12px; color:var(--text-muted);}
+  .live-dot{width:7px; height:7px; border-radius:50%; background:var(--green); box-shadow:0 0 6px var(--green); animation:blink 2s ease-in-out infinite;}
+  @keyframes blink{0%,100%{opacity:1;} 50%{opacity:.35;}}
+
+  .trace-wrap{position:absolute; inset:0; z-index:1; opacity:.55; pointer-events:none;}
+  .trace-path{
+    fill:none;
+    stroke:var(--cyan);
+    stroke-width:1.4;
+    stroke-dasharray:6 5000;
+    animation:trace-draw 7s linear infinite;
+    filter:drop-shadow(0 0 3px rgba(79,216,232,.5));
+  }
+  @keyframes trace-draw{
+    0%{stroke-dashoffset:5000;}
+    100%{stroke-dashoffset:0;}
+  }
+
+  /* ---------- KPI RIBBON ---------- */
+  .kpi-row{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:14px;
+    margin:22px 0 26px;
+  }
+  .kpi-card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:4px;
+    padding:16px 18px;
+    position:relative;
+    overflow:hidden;
+  }
+  .kpi-card::before{
+    content:"";
+    position:absolute; left:0; top:0; bottom:0; width:3px;
+    background:var(--kpi-color, var(--cyan));
+  }
+  .kpi-top{display:flex; align-items:center; justify-content:space-between;}
+  .kpi-label{
+    font-family:var(--font-mono);
+    font-size:10.5px;
+    letter-spacing:1.2px;
+    text-transform:uppercase;
+    color:var(--text-muted);
+  }
+  .kpi-light{width:6px; height:6px; border-radius:50%; background:var(--kpi-color, var(--cyan)); box-shadow:0 0 6px var(--kpi-color, var(--cyan));}
+  .kpi-value{
+    font-family:var(--font-display);
+    font-size:32px;
+    font-weight:600;
+    margin-top:6px;
+    color:var(--kpi-color, var(--text-primary));
+    font-variant-numeric:tabular-nums;
+  }
+  .kpi-unit{font-size:14px; color:var(--text-muted); font-weight:400; margin-left:4px;}
+
+  /* ---------- PANEL GRID ---------- */
+  .panel-grid{
+    display:grid;
+    grid-template-columns:1.15fr 1fr;
+    gap:14px;
+    margin-bottom:14px;
+  }
+  .panel{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:4px;
+    display:flex;
+    flex-direction:column;
+    min-height:340px;
+    max-height:420px;
+  }
+  .panel-head{
+    padding:13px 16px;
+    border-bottom:1px solid var(--border);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-shrink:0;
+  }
+  .panel-title{
+    font-family:var(--font-display);
+    font-size:14px;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    font-weight:500;
+  }
+  .panel-count{
+    font-family:var(--font-mono);
+    font-size:11px;
+    color:var(--text-muted);
+    background:var(--panel-alt);
+    border:1px solid var(--border);
+    padding:2px 8px;
+    border-radius:20px;
+  }
+  .panel-body{overflow-y:auto; flex:1;}
+  .panel-body::-webkit-scrollbar{width:8px;}
+  .panel-body::-webkit-scrollbar-thumb{background:var(--border); border-radius:4px;}
+  .panel-body::-webkit-scrollbar-track{background:transparent;}
+
+  /* ---------- ALERTS ---------- */
+  .alert-row{
+    display:flex;
+    gap:12px;
+    padding:11px 16px;
+    border-bottom:1px solid var(--border-soft);
+    animation:slide-in .4s ease;
+  }
+  @keyframes slide-in{
+    from{opacity:0; transform:translateX(-10px);}
+    to{opacity:1; transform:translateX(0);}
+  }
+  .alert-row.sev-critical{background:linear-gradient(90deg, rgba(255,90,95,.08), transparent 60%);}
+  .alert-row.sev-warning{background:linear-gradient(90deg, rgba(242,169,59,.07), transparent 60%);}
+  .alert-time{font-family:var(--font-mono); font-size:11px; color:var(--text-faint); flex-shrink:0; padding-top:1px;}
+  .alert-body{flex:1;}
+  .alert-meter{font-family:var(--font-mono); font-size:12.5px; font-weight:600;}
+  .alert-meter.sev-critical{color:var(--red);}
+  .alert-meter.sev-warning{color:var(--amber);}
+  .alert-msg{font-size:12.5px; color:var(--text-muted); margin-top:1px;}
+  .alert-badge{
+    font-family:var(--font-mono); font-size:9.5px; letter-spacing:.5px;
+    padding:2px 6px; border-radius:3px; text-transform:uppercase; height:fit-content; flex-shrink:0;
+  }
+  .alert-badge.sev-critical{background:var(--red-dim); color:var(--red); border:1px solid rgba(255,90,95,.35);}
+  .alert-badge.sev-warning{background:var(--amber-dim); color:var(--amber); border:1px solid rgba(242,169,59,.35);}
+
+  .empty-state{padding:40px 20px; text-align:center; color:var(--text-faint); font-size:13px; font-family:var(--font-mono);}
+
+  /* ---------- WORK ORDERS ---------- */
+  .wo-row{
+    padding:12px 16px;
+    border-bottom:1px solid var(--border-soft);
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+  .wo-main{flex:1; min-width:0;}
+  .wo-meter{font-family:var(--font-mono); font-size:13px; font-weight:600;}
+  .wo-meta{font-size:11.5px; color:var(--text-muted); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .status-badge{
+    font-family:var(--font-mono); font-size:9.5px; letter-spacing:.5px; text-transform:uppercase;
+    padding:3px 8px; border-radius:3px; flex-shrink:0;
+  }
+  .status-badge.open{background:var(--red-dim); color:var(--red); border:1px solid rgba(255,90,95,.35);}
+  .status-badge.in-progress{background:var(--cyan-dim); color:var(--cyan); border:1px solid rgba(79,216,232,.35);}
+  .status-badge.resolved{background:var(--green-dim); color:var(--green); border:1px solid rgba(62,213,152,.35);}
+
+  select.assign-select{
+    background:var(--panel-alt);
+    color:var(--text-primary);
+    border:1px solid var(--border);
+    font-family:var(--font-mono);
+    font-size:11px;
+    padding:4px 6px;
+    border-radius:3px;
+    flex-shrink:0;
+    max-width:110px;
+  }
+
+  /* ---------- TELEMETRY TABLE ---------- */
+  .telemetry-panel{background:var(--panel); border:1px solid var(--border); border-radius:4px;}
+  .telemetry-head{
+    padding:14px 16px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    border-bottom:1px solid var(--border);
+    gap:16px;
+    flex-wrap:wrap;
+  }
+  .search-box{
+    background:var(--panel-alt);
+    border:1px solid var(--border);
+    border-radius:4px;
+    padding:7px 12px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    width:280px;
+  }
+  .search-box input{
+    background:transparent; border:none; outline:none;
+    color:var(--text-primary); font-family:var(--font-mono); font-size:12.5px;
+    width:100%;
+  }
+  .search-box input::placeholder{color:var(--text-faint);}
+  .search-box svg{flex-shrink:0; opacity:.5;}
+
+  table{width:100%; border-collapse:collapse;}
+  thead th{
+    text-align:left;
+    font-family:var(--font-mono);
+    font-size:10.5px;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    color:var(--text-muted);
+    padding:11px 16px;
+    border-bottom:1px solid var(--border);
+    font-weight:500;
+  }
+  tbody td{
+    padding:12px 16px;
+    font-size:13px;
+    border-bottom:1px solid var(--border-soft);
+    font-family:var(--font-mono);
+  }
+  tbody tr:hover{background:rgba(79,216,232,0.03);}
+  tbody tr.row-tampered{background:rgba(255,90,95,0.045);}
+  tbody tr.row-disconnected td{color:var(--text-faint);}
+  .meter-id-cell{font-weight:600;}
+  .status-pill{display:inline-flex; align-items:center; gap:6px; font-size:11.5px;}
+  .status-pill .dot{width:6px; height:6px; border-radius:50%;}
+  .status-pill.active .dot{background:var(--green); box-shadow:0 0 5px var(--green);}
+  .status-pill.tampered .dot{background:var(--red); box-shadow:0 0 5px var(--red); animation:blink 1.2s ease-in-out infinite;}
+  .status-pill.disconnected .dot{background:var(--text-faint);}
+
+  .disc-btn{
+    font-family:var(--font-mono);
+    font-size:10.5px;
+    letter-spacing:.5px;
+    background:transparent;
+    color:var(--red);
+    border:1px solid rgba(255,90,95,.45);
+    padding:6px 10px;
+    border-radius:3px;
+    cursor:pointer;
+    text-transform:uppercase;
+    transition:background .15s, color .15s;
+  }
+  .disc-btn:hover{background:var(--red); color:#0a0e13;}
+  .disc-btn:disabled{
+    opacity:.4; cursor:not-allowed; color:var(--text-faint); border-color:var(--border);
+  }
+  .disc-btn:disabled:hover{background:transparent; color:var(--text-faint);}
+
+  footer{
+    text-align:center;
+    padding:26px 20px 0;
+    font-family:var(--font-mono);
+    font-size:11px;
+    color:var(--text-faint);
+  }
+
+  /* ---------- MODAL ---------- */
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(6,9,12,.7);
+    display:flex; align-items:center; justify-content:center;
+    z-index:50; opacity:0; pointer-events:none; transition:opacity .15s;
+  }
+  .modal-overlay.open{opacity:1; pointer-events:auto;}
+  .modal{
+    background:var(--panel); border:1px solid var(--border); border-radius:6px;
+    width:380px; max-width:90vw; padding:22px; box-shadow:0 20px 60px rgba(0,0,0,.5);
+  }
+  .modal-title{font-family:var(--font-display); font-size:17px; letter-spacing:1px; text-transform:uppercase; color:var(--red); margin:0 0 8px;}
+  .modal-body{font-size:13.5px; color:var(--text-muted); line-height:1.5; margin-bottom:20px;}
+  .modal-body strong{color:var(--text-primary); font-family:var(--font-mono);}
+  .modal-actions{display:flex; gap:10px; justify-content:flex-end;}
+  .btn{
+    font-family:var(--font-mono); font-size:11.5px; letter-spacing:.5px; text-transform:uppercase;
+    padding:9px 16px; border-radius:4px; cursor:pointer; border:1px solid var(--border); background:transparent; color:var(--text-primary);
+  }
+  .btn-danger{background:var(--red); border-color:var(--red); color:#0a0e13; font-weight:600;}
+  .btn-danger:hover{background:#ff7377;}
+  .btn:hover{background:var(--panel-alt);}
+
+  /* toast */
+  .toast{
+    position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(10px);
+    background:var(--panel-alt); border:1px solid var(--border); color:var(--text-primary);
+    font-family:var(--font-mono); font-size:12.5px; padding:11px 18px; border-radius:4px;
+    box-shadow:0 10px 30px rgba(0,0,0,.4); opacity:0; pointer-events:none; transition:all .25s; z-index:60;
+    display:flex; align-items:center; gap:8px;
+  }
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+  .toast .dot{width:6px; height:6px; border-radius:50%; background:var(--green);}
+
+  @media (max-width: 980px){
+    .kpi-row{grid-template-columns:repeat(2, 1fr);}
+    .panel-grid{grid-template-columns:1fr;}
+    .search-box{width:100%;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .trace-path, .live-dot, .status-pill.tampered .dot, .alert-row{animation:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="trace-wrap">
+    <svg class="trace-wrap" viewBox="0 0 1400 110" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path class="trace-path" d="M0,55 L120,55 L145,20 L170,90 L195,55 L340,55 L365,15 L390,95 L415,55 L620,55 L645,25 L670,85 L695,55 L900,55 L925,10 L950,100 L975,55 L1150,55 L1175,22 L1200,88 L1225,55 L1400,55"/>
+    </svg>
+  </div>
+  <div class="header-inner">
+    <div class="brandblock">
+      <div class="brand-mark"></div>
+      <div>
+        <h1>VoltGuard</h1>
+        <div class="subtitle">GRID PROTECTION &amp; METER DATA MANAGEMENT — CONTROL CONSOLE</div>
+      </div>
+    </div>
+    <div class="header-status">
+      <span class="live-dot"></span>
+      <span id="statusText">LIVE FEED CONNECTED</span>
+      <span style="color:var(--text-faint)">|</span>
+      <span id="clockText">--:--:--</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- KPI RIBBON -->
+  <div class="kpi-row">
+    <div class="kpi-card" style="--kpi-color:var(--amber)">
+      <div class="kpi-top"><span class="kpi-label">Total Stolen Energy</span><span class="kpi-light"></span></div>
+      <div class="kpi-value" id="kpiStolen">0<span class="kpi-unit">kWh</span></div>
+    </div>
+    <div class="kpi-card" style="--kpi-color:var(--red)">
+      <div class="kpi-top"><span class="kpi-label">Revenue Leakage</span><span class="kpi-light"></span></div>
+      <div class="kpi-value" id="kpiRevenue">₹0</div>
+    </div>
+    <div class="kpi-card" style="--kpi-color:var(--red)">
+      <div class="kpi-top"><span class="kpi-label">Active Tampers</span><span class="kpi-light"></span></div>
+      <div class="kpi-value" id="kpiTampers">0</div>
+    </div>
+    <div class="kpi-card" style="--kpi-color:var(--cyan)">
+      <div class="kpi-top"><span class="kpi-label">Unassigned Jobs</span><span class="kpi-light"></span></div>
+      <div class="kpi-value" id="kpiJobs">0</div>
+    </div>
+  </div>
+
+  <!-- ALERTS + WORK ORDERS -->
+  <div class="panel-grid">
+    <div class="panel">
+      <div class="panel-head">
+        <span class="panel-title">Live Alerts</span>
+        <span class="panel-count" id="alertCount">0 today</span>
+      </div>
+      <div class="panel-body" id="alertsFeed">
+        <div class="empty-state">No anomalies detected yet. Monitoring field telemetry…</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <span class="panel-title">Work Order Queue</span>
+        <span class="panel-count" id="woCount">0 open</span>
+      </div>
+      <div class="panel-body" id="woQueue">
+        <div class="empty-state">No open work orders.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TELEMETRY GRID -->
+  <div class="telemetry-panel">
+    <div class="telemetry-head">
+      <span class="panel-title">Meter Telemetry</span>
+      <div class="search-box">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input id="meterSearch" type="text" placeholder="Search meter ID or area…" />
+      </div>
+    </div>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>Meter ID</th>
+            <th>Area</th>
+            <th>Last Reading</th>
+            <th>Voltage</th>
+            <th>Phase (Iₚ)</th>
+            <th>Neutral (Iₙ)</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="meterTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <footer>
+    VoltGuard MDM · Endpoints: POST /api/v1/meters/ping · GET /api/v1/admin/stats · GET /api/v1/admin/work-orders · POST /api/v1/admin/meters/{meterId}/disconnect
+  </footer>
+</div>
+
+<!-- DISCONNECT CONFIRM MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h2 class="modal-title">Confirm remote disconnect</h2>
+    <div class="modal-body">
+      This opens the remote relay on <strong id="modalMeterId"></strong> and cuts power to the line immediately. The action cannot be undone from this console.
+    </div>
+    <div class="modal-actions">
+      <button class="btn" id="modalCancel">Cancel</button>
+      <button class="btn btn-danger" id="modalConfirm">Disconnect meter</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span class="dot"></span><span id="toastText"></span></div>
+
+<script>
+(() => {
+  // ============================================================
+  // CONFIG
+  // In production, replace the mock functions below with real
+  // fetch() calls against the VoltGuard backend, e.g.:
+  //   GET  /api/v1/admin/stats
+  //   GET  /api/v1/admin/work-orders
+  //   POST /api/v1/admin/meters/{meterId}/disconnect
+  // The mock data engine here simulates live field telemetry so
+  // the console is fully interactive without a backend attached.
+  // ============================================================
+
+  const AREAS = ["Substation Delta-1", "Substation Alpha-3", "Substation Kappa-2", "Substation Rho-7", "Substation Beta-5"];
+  const ENGINEERS = ["Unassigned", "Rahul Mehta", "Priya Nair", "Suresh Kumar", "Anjali Rao"];
+  const DISPARITY_THRESHOLD = 2.0;
+
+  let meters = [];
+  let workOrders = [];
+  let alerts = [];
+  let woIdCounter = 1;
+  let alertsToday = 0;
+
+  function seedMeters(){
+    const count = 14;
+    for(let i=0;i<count;i++){
+      const id = "MTR-" + (1000 + i);
+      const baseline = +(80 + Math.random()*220).toFixed(2);
+      const ip = +(1 + Math.random()*3).toFixed(1);
+      meters.push({
+        id,
+        area: AREAS[i % AREAS.length],
+        status: "ACTIVE",
+        lastReading: baseline,
+        voltage: +(228 + Math.random()*6).toFixed(1),
+        phaseCurrent: ip,
+        neutralCurrent: +(ip - (Math.random()*0.6)).toFixed(1),
+        version: 0
+      });
+    }
+  }
+
+  function fmtTime(d){
+    return d.toTimeString().slice(0,8);
+  }
+
+  function pushAlert(meter, severity, message){
+    alerts.unshift({
+      id: crypto.randomUUID ? crypto.randomUUID() : Date.now()+Math.random(),
+      time: fmtTime(new Date()),
+      meterId: meter.id,
+      severity,
+      message
+    });
+    alerts = alerts.slice(0, 40);
+    alertsToday++;
+  }
+
+  function createWorkOrder(meter, issueType){
+    const wo = {
+      id: woIdCounter++,
+      meterId: meter.id,
+      area: meter.area,
+      engineer: "Unassigned",
+      issueType,
+      status: "OPEN",
+      createdAt: new Date()
+    };
+    workOrders.unshift(wo);
+    return wo;
+  }
+
+  // --- simulate one telemetry tick across a random subset of meters ---
+  function simulateTick(){
+    const activeMeters = meters.filter(m => m.status !== "DISCONNECTED");
+    if(activeMeters.length === 0) return;
+
+    const touchCount = 1 + Math.floor(Math.random()*2);
+    for(let t=0; t<touchCount; t++){
+      const m = activeMeters[Math.floor(Math.random()*activeMeters.length)];
+
+      // drift normal readings
+      m.lastReading = +(m.lastReading + Math.random()*4).toFixed(2);
+      m.voltage = +(225 + Math.random()*10).toFixed(1);
+
+      // small chance of a tamper-like event on a currently active meter
+      const tamperRoll = Math.random();
+      if(m.status === "ACTIVE" && tamperRoll < 0.16){
+        const disparity = +(2.1 + Math.random()*6).toFixed(1);
+        m.phaseCurrent = +(3 + Math.random()*3).toFixed(1);
+        m.neutralCurrent = +(m.phaseCurrent - disparity).toFixed(1);
+        m.status = "FLAGGED_TAMPERED";
+        pushAlert(m, "critical", `CURRENT DISPARITY ${disparity}A — exceeds ${DISPARITY_THRESHOLD}A threshold, meter flagged`);
+        createWorkOrder(m, "TAMPERING");
+      } else if(m.status === "ACTIVE" && (m.voltage > 233 || m.voltage < 226) && Math.random() < 0.4){
+        pushAlert(m, "warning", `VOLTAGE OUT OF RANGE — reading ${m.voltage}V`);
+      } else if(m.status === "ACTIVE"){
+        const ip = +(1 + Math.random()*3).toFixed(1);
+        m.phaseCurrent = ip;
+        m.neutralCurrent = +(ip - Math.random()*0.5).toFixed(1);
+      }
+    }
+    renderAll();
+  }
+
+  // --- KPI aggregation ---
+  function computeStats(){
+    const activeTampers = meters.filter(m => m.status === "FLAGGED_TAMPERED").length;
+    const totalStolenKwh = meters
+      .filter(m => m.status === "FLAGGED_TAMPERED")
+      .reduce((sum,m) => sum + Math.abs(m.phaseCurrent - m.neutralCurrent) * 42, 0);
+    const revenueLoss = totalStolenKwh * 7.1; // illustrative tariff conversion
+    const unassigned = workOrders.filter(w => w.engineer === "Unassigned" && w.status !== "RESOLVED").length;
+    return {
+      totalStolenKwh: totalStolenKwh,
+      revenueLoss: revenueLoss,
+      activeTampers,
+      unassigned
+    };
+  }
+
+  // ============================================================
+  // RENDERING
+  // ============================================================
+  function renderKpis(){
+    const s = computeStats();
+    document.getElementById('kpiStolen').innerHTML = s.totalStolenKwh.toLocaleString('en-IN', {maximumFractionDigits:0}) + '<span class="kpi-unit">kWh</span>';
+    document.getElementById('kpiRevenue').textContent = '₹' + s.revenueLoss.toLocaleString('en-IN', {maximumFractionDigits:0});
+    document.getElementById('kpiTampers').textContent = s.activeTampers;
+    document.getElementById('kpiJobs').textContent = s.unassigned;
+  }
+
+  function renderAlerts(){
+    const feed = document.getElementById('alertsFeed');
+    document.getElementById('alertCount').textContent = alertsToday + ' today';
+    if(alerts.length === 0){
+      feed.innerHTML = '<div class="empty-state">No anomalies detected yet. Monitoring field telemetry…</div>';
+      return;
+    }
+    feed.innerHTML = alerts.slice(0,25).map(a => `
+      <div class="alert-row sev-${a.severity}">
+        <span class="alert-time">${a.time}</span>
+        <div class="alert-body">
+          <span class="alert-meter sev-${a.severity}">${a.meterId}</span>
+          <div class="alert-msg">${a.message}</div>
+        </div>
+        <span class="alert-badge sev-${a.severity}">${a.severity === 'critical' ? 'Breach' : 'Warning'}</span>
+      </div>
+    `).join('');
+  }
+
+  function statusBadgeClass(status){
+    if(status === "OPEN") return "open";
+    if(status === "IN_PROGRESS") return "in-progress";
+    return "resolved";
+  }
+  function statusLabel(status){
+    if(status === "OPEN") return "Open";
+    if(status === "IN_PROGRESS") return "In progress";
+    return "Resolved";
+  }
+
+  function renderWorkOrders(){
+    const queue = document.getElementById('woQueue');
+    const open = workOrders.filter(w => w.status !== "RESOLVED");
+    document.getElementById('woCount').textContent = open.length + ' open';
+    if(workOrders.length === 0){
+      queue.innerHTML = '<div class="empty-state">No open work orders.</div>';
+      return;
+    }
+    queue.innerHTML = workOrders.slice(0,25).map(w => `
+      <div class="wo-row">
+        <div class="wo-main">
+          <div class="wo-meter">${w.meterId}</div>
+          <div class="wo-meta">${w.area} · ${w.issueType === 'TAMPERING' ? 'Tampering' : 'Fraud'}</div>
+        </div>
+        <select class="assign-select" data-wo="${w.id}" ${w.status === 'RESOLVED' ? 'disabled' : ''}>
+          ${ENGINEERS.map(e => `<option value="${e}" ${e===w.engineer?'selected':''}>${e}</option>`).join('')}
+        </select>
+        <span class="status-badge ${statusBadgeClass(w.status)}">${statusLabel(w.status)}</span>
+      </div>
+    `).join('');
+
+    queue.querySelectorAll('.assign-select').forEach(sel => {
+      sel.addEventListener('change', (e) => {
+        const woId = Number(e.target.dataset.wo);
+        const wo = workOrders.find(w => w.id === woId);
+        if(!wo) return;
+        wo.engineer = e.target.value;
+        wo.status = wo.engineer === "Unassigned" ? "OPEN" : "IN_PROGRESS";
+        renderWorkOrders();
+        renderKpis();
+        showToast(`${wo.meterId} assigned to ${wo.engineer}`);
+      });
+    });
+  }
+
+  function meterStatusPill(status){
+    if(status === "FLAGGED_TAMPERED") return `<span class="status-pill tampered"><span class="dot"></span>Tampered</span>`;
+    if(status === "DISCONNECTED") return `<span class="status-pill disconnected"><span class="dot"></span>Disconnected</span>`;
+    return `<span class="status-pill active"><span class="dot"></span>Active</span>`;
+  }
+
+  function renderTelemetry(){
+    const body = document.getElementById('meterTableBody');
+    const query = document.getElementById('meterSearch').value.trim().toLowerCase();
+    const rows = meters.filter(m => !query || m.id.toLowerCase().includes(query) || m.area.toLowerCase().includes(query));
+
+    if(rows.length === 0){
+      body.innerHTML = `<tr><td colspan="8" style="text-align:center; color:var(--text-faint); padding:30px; font-family:var(--font-body);">No meters match “${query}”.</td></tr>`;
+      return;
+    }
+
+    body.innerHTML = rows.map(m => {
+      const rowClass = m.status === "FLAGGED_TAMPERED" ? "row-tampered" : (m.status === "DISCONNECTED" ? "row-disconnected" : "");
+      const disabled = m.status === "DISCONNECTED" ? "disabled" : "";
+      return `
+        <tr class="${rowClass}">
+          <td class="meter-id-cell">${m.id}</td>
+          <td style="font-family:var(--font-body); color:var(--text-muted);">${m.area}</td>
+          <td>${m.lastReading.toLocaleString('en-IN')} kWh</td>
+          <td>${m.voltage}V</td>
+          <td>${m.phaseCurrent}A</td>
+          <td>${m.neutralCurrent}A</td>
+          <td>${meterStatusPill(m.status)}</td>
+          <td><button class="disc-btn" data-meter="${m.id}" ${disabled}>Disconnect</button></td>
+        </tr>
+      `;
+    }).join('');
+
+    body.querySelectorAll('.disc-btn').forEach(btn => {
+      btn.addEventListener('click', () => openDisconnectModal(btn.dataset.meter));
+    });
+  }
+
+  function renderAll(){
+    renderKpis();
+    renderAlerts();
+    renderWorkOrders();
+    renderTelemetry();
+  }
+
+  // ============================================================
+  // DISCONNECT FLOW (POST /api/v1/admin/meters/{meterId}/disconnect)
+  // ============================================================
+  let pendingDisconnectId = null;
+  const overlay = document.getElementById('modalOverlay');
+
+  function openDisconnectModal(meterId){
+    pendingDisconnectId = meterId;
+    document.getElementById('modalMeterId').textContent = meterId;
+    overlay.classList.add('open');
+  }
+  function closeModal(){
+    overlay.classList.remove('open');
+    pendingDisconnectId = null;
+  }
+  document.getElementById('modalCancel').addEventListener('click', closeModal);
+  overlay.addEventListener('click', (e) => { if(e.target === overlay) closeModal(); });
+
+  document.getElementById('modalConfirm').addEventListener('click', () => {
+    if(!pendingDisconnectId) return;
+    const m = meters.find(mm => mm.id === pendingDisconnectId);
+    if(m){
+      m.status = "DISCONNECTED";
+      m.version++;
+      pushAlert(m, "warning", "Remote relay opened — power cutoff complete");
+      const wo = workOrders.find(w => w.meterId === m.id && w.status !== "RESOLVED");
+      if(wo){ wo.status = "RESOLVED"; }
+      renderAll();
+      showToast(`${m.id} disconnected — relay opened`);
+    }
+    closeModal();
+  });
+
+  // ============================================================
+  // TOAST
+  // ============================================================
+  let toastTimer = null;
+  function showToast(msg){
+    const toast = document.getElementById('toast');
+    document.getElementById('toastText').textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
+  }
+
+  // ============================================================
+  // SEARCH + CLOCK + POLL LOOP
+  // ============================================================
+  document.getElementById('meterSearch').addEventListener('input', renderTelemetry);
+
+  function tickClock(){
+    document.getElementById('clockText').textContent = fmtTime(new Date());
+  }
+  setInterval(tickClock, 1000);
+  tickClock();
+
+  seedMeters();
+  renderAll();
+
+  // Simulates the 5s KPI/alerts poll loop described in the spec.
+  setInterval(simulateTick, 3200);
+})();
+</script>
+</body>
+</html>
