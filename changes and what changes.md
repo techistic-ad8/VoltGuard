@@ -6,30 +6,27 @@ This document contains a log of all modifications, updates, and files added duri
 
 ## Summary of Changes
 
-### 1. Next.js Backend Integration & Data Caching Fix
-* **[MODIFY] [frontend/next.config.ts](file:///d:/Springboot%20Project/frontend/next.config.ts)**
-  * *Change*: Added API rewrites proxy mapping `/api/*` requests directly to `http://localhost:8085/api/*`.
-* **[MODIFY] [frontend/src/app/page.tsx](file:///d:/Springboot%20Project/frontend/src/app/page.tsx)**
-  * *Change*: Added `{ cache: 'no-store' }` options to all API `fetch` requests (`/api/meters`, `/api/readings`, `/api/work-orders`) to override Next.js Data Cache. This ensures real-time telemetry pings dynamically update the Next.js UI live on every 3-second poll. Auto-selected the first meter badge ID on initial load so the Telemetry Simulator form is ready out of the box.
+### 1. Modernize-React-Lite Material-UI Dashboard Customization
+* **[NEW] [Vite Proxy Configuration](file:///d:/Springboot%20Project/modernize-react-lite-main/package/vite.config.js)**: Configured `/api` proxy mapping requests to Spring Boot on `http://localhost:8085`.
+* **[NEW] [VoltGuard Branding & Navigation](file:///d:/Springboot%20Project/modernize-react-lite-main/package/src/layouts/full/shared/logo/Logo.js)**: Updated logo to VoltGuard Govt Power Security. Updated sidebar menu items in `MenuItems.js` for Overview, Meter Inventory, Live Telemetry, Work Orders, and H2 Console.
+* **[NEW] [CurrentDisparityChart.js](file:///d:/Springboot%20Project/modernize-react-lite-main/package/src/views/dashboard/components/CurrentDisparityChart.js)**: ApexCharts line graph rendering Phase Current ($I_p$), Neutral Current ($I_n$), and Current Disparity ($|I_p - I_n|$).
+* **[NEW] [TamperAlertSummary.js](file:///d:/Springboot%20Project/modernize-react-lite-main/package/src/views/dashboard/components/TamperAlertSummary.js)**: Material-UI stat cards for Monitored Meters, Tampered Meters, Grid Voltage, and Active Work Orders.
+* **[NEW] [MeterInventoryTable.js](file:///d:/Springboot%20Project/modernize-react-lite-main/package/src/views/dashboard/components/MeterInventoryTable.js)**: Material-UI Table with search filter, badge ID, status Chips, baseline consumption, and a "Simulate" action button.
+* **[NEW] [LiveTelemetryLog.js](file:///d:/Springboot%20Project/modernize-react-lite-main/package/src/views/dashboard/components/LiveTelemetryLog.js)**: Material-UI feed showing recent telemetry pings.
+* **[NEW] [TelemetrySimulator.js](file:///d:/Springboot%20Project/modernize-react-lite-main/package/src/views/dashboard/components/TelemetrySimulator.js)**: Material-UI form to broadcast pings to `/api/meters/ping` with an Auto-Tamper preset button.
+* **[NEW] [WorkOrdersPanel.js](file:///d:/Springboot%20Project/modernize-react-lite-main/package/src/views/dashboard/components/WorkOrdersPanel.js)**: Material-UI list and engineer assignment dialog.
+* **[NEW] [Dashboard.js](file:///d:/Springboot%20Project/modernize-react-lite-main/package/src/views/dashboard/Dashboard.js)**: Assembled all VoltGuard components into a clean Material-UI Grid layout.
 
-### 2. Government Light Theme & Screen Fitting Overhaul
-* **[MODIFY] [frontend/src/app/globals.css](file:///d:/Springboot%20Project/frontend/src/app/globals.css)**
-  * *Change*: Converted theme palette to an official Government Light Theme (`#f8fafc` slate background, `#ffffff` pure white elevation cards with `#e2e8f0` borders, `#0f172a` deep navy sidebar). Added viewport fitting CSS rules (`max-width: 1600px`, fluid flex topbars, and auto-overflow table wrappers).
-* **[MODIFY] [frontend/src/app/layout.tsx](file:///d:/Springboot%20Project/frontend/src/app/layout.tsx)**
-  * *Change*: Added `Plus Jakarta Sans` and `Inter` Google Fonts for executive government utility typography.
-* **[MODIFY] [src/main/resources/static/dashboard.html](file:///d:/Springboot%20Project/src/main/resources/static/dashboard.html)**
-  * *Change*: Updated static prototype with matching light theme styling, fonts, and responsive layout rules.
+---
 
-### 3. Data Security & Sensitive File Protection
-* **[MODIFY] [.gitignore](file:///d:/Springboot%20Project/.gitignore)**
-  * *Change*: Added explicit exclusion patterns for sensitive datasets (`*.csv`, `*.csv.gz`, `*.gz`), database files (`*.db`, `*.h2.db`), data directories (`data/`, `datasets/`), logs, and environment variable files (`.env`).
-
-### 4. Backend Core & API Updates
-* **[MODIFY] [MeterService.java](file:///d:/Springboot%20Project/src/main/java/com/example/app/service/MeterService.java)**
-  * *Change*: Fixed `WorkOrder` constructor parameters matching 4 arguments.
-* **[MODIFY] [MeterController.java](file:///d:/Springboot%20Project/src/main/java/com/example/app/controller/MeterController.java)**
-  * *Change*: Added `PUT /api/work-orders/{id}` endpoint and `@CrossOrigin(origins = "*")` annotation.
-
-### 5. Master Documentation
-* **[MODIFY] [PROJECT_DOCUMENTATION.md](file:///d:/Springboot%20Project/PROJECT_DOCUMENTATION.md)**
-  * *Change*: Updated master architecture documentation to detail the light theme dashboard, CORS setup, Next.js rewrites proxy, and anti-tampering algorithms.
+## Individual Git Commits Record
+1. `612883d` - `feat(modernize): configure vite proxy and server settings`
+2. `381cf60` - `feat(modernize): update logo and navigation menu items for VoltGuard`
+3. `6af32ef` - `feat(modernize): add CurrentDisparityChart ApexCharts component`
+4. `7e3cf70` - `feat(modernize): add TamperAlertSummary MUI stat cards component`
+5. `666c001` - `feat(modernize): add MeterInventoryTable component`
+6. `33142ae` - `feat(modernize): add LiveTelemetryLog feed component`
+7. `4d9a97a` - `feat(modernize): add TelemetrySimulator form component`
+8. `11cb97c` - `feat(modernize): add WorkOrdersPanel component`
+9. `9bd3126` - `feat(modernize): integrate VoltGuard components into Dashboard view`
+10. Pending - `docs: update master documentation and changelog for Modernize dashboard`

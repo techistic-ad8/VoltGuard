@@ -18,6 +18,7 @@ VoltGuard is a smart grid security and anti-tampering platform designed to detec
 ```mermaid
 graph TD
     subgraph Frontend Layer
+        ModernizeUI[Modernize React Lite Dashboard - Vite + MUI v9 - Port 3000]
         NextJS[Next.js App Router SPA - Port 3000]
         StaticUI[Elevated Static HTML/CSS Dashboard - Port 8085]
     end
@@ -33,7 +34,8 @@ graph TD
         DB[(H2 In-Memory DB / PostgreSQL)]
     end
 
-    NextJS -->|HTTP / CORS| Controller
+    ModernizeUI -->|HTTP / Vite Proxy| Controller
+    NextJS -->|HTTP / Next Rewrites| Controller
     StaticUI -->|HTTP Same-Origin| Controller
     Controller --> MeterSvc
     MeterSvc --> Repos
@@ -57,10 +59,6 @@ Broadcasting smart meter telemetry.
     "neutralCurrent": 4.80
   }
   ```
-* **Behavior**:
-  1. Finds or registers the `Meter`.
-  2. Saves telemetry record to `MeterReading`.
-  3. Evaluates $|I_p - I_n| > 2.0\text{A}$. If true, sets status to `FLAGGED_TAMPERED` and creates an open `WorkOrder`.
 
 ### `GET /api/meters`
 Returns list of all monitored meters.
@@ -73,56 +71,33 @@ Returns list of all maintenance tickets.
 
 ### `PUT /api/work-orders/{id}`
 Updates a work order's assigned engineer or status.
-* **Request Body**:
-  ```json
-  {
-    "assignedEngineer": "Engineer Sarah Chen",
-    "status": "OPEN"
-  }
-  ```
 
 ---
 
-## 4. Frontend Application Architecture
-
-VoltGuard provides two UI options:
-
-### Option A: Next.js Standalone Application (`/frontend`)
-* **Framework**: Next.js 16 App Router, TypeScript, React 19, Vanilla CSS.
-* **Location**: `d:\Springboot Project\frontend\`
-* **Key Components**:
-  - `src/app/page.tsx`: Client dashboard with live polling, KPI metrics cards, interactive Chart.js line graphs, mock ping simulator, and engineer assignment modals.
-  - `src/app/globals.css`: Dark glassmorphism stylesheet.
-
-### Option B: Elevated Static Prototype (`dashboard.html` / `index.html`)
-* **Location**: `src/main/resources/static/dashboard.html` & `index.html`
-* **Features**: Embedded single-file dashboard using vanilla HTML5, CSS variables, and Lucide icons.
+## 4. Modernize-React-Lite Material-UI Dashboard (`/modernize-react-lite-main/package`)
+* **Framework**: React 19, Vite, Material-UI v9 (`@mui/material`), ApexCharts (`react-apexcharts`), Tabler Icons (`@tabler/icons-react`).
+* **Location**: `d:\Springboot Project\modernize-react-lite-main\package\`
+* **Custom Modules**:
+  - `CurrentDisparityChart.js`: ApexCharts smooth curves rendering $I_p$, $I_n$, and $|I_p - I_n|$.
+  - `TamperAlertSummary.js`: MUI Stat Cards for Total Monitored Meters, Tampered Meters, Grid Voltage, and Active Work Orders.
+  - `MeterInventoryTable.js`: MUI Data Table with search filter, badge ID, status Chips, baseline consumption, and a "Simulate" action button.
+  - `LiveTelemetryLog.js`: MUI Feed showing incoming telemetry broadcasts.
+  - `TelemetrySimulator.js`: MUI Form to construct pings with an Auto-Tamper preset button.
+  - `WorkOrdersPanel.js`: MUI Work orders list, engineer assignment dialog, and resolution trigger buttons.
 
 ---
 
 ## 5. Development & Execution Instructions
 
 ### Step 1: Start Backend (Spring Boot)
-Run from the root directory:
 ```powershell
 .\mvnw spring-boot:run
 ```
 * API Server: `http://localhost:8085`
-* H2 Database Console: `http://localhost:8085/h2-console` (JDBC URL: `jdbc:h2:mem:voltguard`, User: `sa`, Password: blank)
-* Static Prototype: `http://localhost:8085/dashboard.html`
 
-### Step 2: Start Next.js Frontend
-Run from the `frontend/` directory:
+### Step 2: Start Modernize Material-UI Dashboard
 ```powershell
-cd frontend
+cd modernize-react-lite-main/package
 npm run dev
 ```
-* Next.js UI: `http://localhost:3000`
-
----
-
-## 6. Repository Publishing & Git Workflow Rule
-Per `gemini.md` and `.agents/AGENTS.md` guidelines:
-1. Every code edit must update `changes and what changes.md`.
-2. Changes must be committed using Conventional Commits (`feat: ...`, `fix: ...`, `docs: ...`).
-3. Changes must be pushed directly to origin branch `main`.
+* Modernize Dashboard: `http://localhost:3000`
