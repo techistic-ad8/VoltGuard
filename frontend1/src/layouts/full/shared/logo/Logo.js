@@ -1,44 +1,82 @@
+import React from "react";
 import { Link } from "react-router";
-import { styled, Box, Typography } from "@mui/material";
-import { IconShield } from "@tabler/icons-react";
+import { Box, Typography, IconButton } from "@mui/material";
+import { IconShieldCheck, IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 
-const LinkStyled = styled(Link)(() => ({
-  height: "70px",
-  width: "100%",
-  overflow: "hidden",
-  display: "flex",
-  alignItems: "center",
-  textDecoration: "none",
-}));
-
-const Logo = () => {
+const Logo = ({ isCollapsed, toggleSidebar }) => {
   return (
-    <LinkStyled to="/">
-      <Box
-        sx={{
-          width: 36,
-          height: 36,
-          borderRadius: "8px",
-          background: "linear-gradient(135deg, #2563eb, #1d4ed8)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          color: "#ffffff",
-          mr: 1.5,
-          boxShadow: "0 2px 8px rgba(37, 99, 235, 0.4)",
+    <Box 
+      sx={{ 
+        display: "flex", 
+        alignItems: "center", 
+        justifyContent: isCollapsed ? "center" : "space-between", 
+        width: "100%",
+        py: 0.5,
+      }}
+    >
+      <Link 
+        to="/" 
+        style={{ 
+          display: "flex", 
+          alignItems: "center", 
+          textDecoration: "none",
+          gap: "10px"
         }}
       >
-        <IconShield size={22} />
-      </Box>
-      <Box>
-        <Typography variant="h6" fontWeight={800} color="#0f172a" lineHeight={1}>
-          <span style={{ color: "#2563eb" }}>Volt</span>Guard
-        </Typography>
-        <Typography variant="caption" color="textSecondary" fontWeight={700} sx={{ letterSpacing: 0.8, fontSize: 9 }}>
-          GOVT POWER SECURITY
-        </Typography>
-      </Box>
-    </LinkStyled>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "#3772ff",
+            flexShrink: 0,
+          }}
+        >
+          <IconShieldCheck size={28} stroke={2} color="#3772ff" />
+        </Box>
+        {!isCollapsed && (
+          <Box sx={{ whiteSpace: 'nowrap' }}>
+            <Typography variant="h6" fontWeight={700} color="#3772ff" lineHeight={1} fontSize={17}>
+              VoltGuard Security
+            </Typography>
+            <Typography variant="caption" color="textSecondary" fontWeight={700} sx={{ letterSpacing: 0.8, fontSize: 8.5, display: 'block', mt: 0.3 }}>
+              POWER SECURITY
+            </Typography>
+          </Box>
+        )}
+      </Link>
+
+      {toggleSidebar && !isCollapsed && (
+        <IconButton 
+          onClick={toggleSidebar} 
+          size="small" 
+          sx={{ 
+            bgcolor: 'rgba(0, 0, 0, 0.04)', 
+            '&:hover': { bgcolor: 'rgba(55, 114, 255, 0.1)', color: '#3772ff' },
+            borderRadius: '8px',
+            ml: 1
+          }}
+          title="Minimize Sidebar"
+        >
+          <IconChevronLeft size={18} />
+        </IconButton>
+      )}
+      {toggleSidebar && isCollapsed && (
+        <IconButton 
+          onClick={toggleSidebar} 
+          size="small" 
+          sx={{ 
+            bgcolor: 'rgba(0, 0, 0, 0.04)', 
+            '&:hover': { bgcolor: 'rgba(55, 114, 255, 0.1)', color: '#3772ff' },
+            borderRadius: '8px',
+            mt: 1
+          }}
+          title="Expand Sidebar"
+        >
+          <IconChevronRight size={18} />
+        </IconButton>
+      )}
+    </Box>
   );
 };
 

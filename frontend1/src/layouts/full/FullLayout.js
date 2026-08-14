@@ -24,56 +24,36 @@ const PageWrapper = styled('div')(() => ({
 }));
 
 const FullLayout = () => {
-
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
-  // const lgUp = useMediaQuery((theme) => theme.breakpoints.up("lg"));
 
   return (
     <>
-    <MainWrapper
-      className='mainwrapper'
-    >
+      <MainWrapper className='mainwrapper'>
+        {/* Sidebar */}
+        <Sidebar 
+          isSidebarOpen={isSidebarOpen}
+          isMobileSidebarOpen={isMobileSidebarOpen}
+          onSidebarClose={() => setMobileSidebarOpen(false)}
+          toggleSidebar={() => setSidebarOpen(!isSidebarOpen)} 
+        />
 
-      {/* ------------------------------------------- */}
-      {/* Sidebar */}
-      {/* ------------------------------------------- */}
-      <Sidebar isSidebarOpen={isSidebarOpen}
-        isMobileSidebarOpen={isMobileSidebarOpen}
-        onSidebarClose={() => setMobileSidebarOpen(false)} />
-
-
-      {/* ------------------------------------------- */}
-      {/* Main Wrapper */}
-      {/* ------------------------------------------- */}
-      <PageWrapper
-        className="page-wrapper"
-      >
-        {/* ------------------------------------------- */}
-        {/* Header */}
-        {/* ------------------------------------------- */}
-        <Header toggleSidebar={() => setSidebarOpen(!isSidebarOpen)} toggleMobileSidebar={() => setMobileSidebarOpen(true)} />
-        {/* ------------------------------------------- */}
-        {/* PageContent */}
-        {/* ------------------------------------------- */}
-        <Container sx={{
-          paddingTop: "20px",
-          maxWidth: '1200px',
-        }}
-        >
-          {/* ------------------------------------------- */}
-          {/* Page Route */}
-          {/* ------------------------------------------- */}
-          <Box sx={{ minHeight: 'calc(100vh - 250px)' }}>
-            <Outlet />
-          </Box>
-          {/* ------------------------------------------- */}
-          {/* End Page */}
-          {/* ------------------------------------------- */}
-        </Container>
-        <Footer />
-      </PageWrapper>
-    </MainWrapper>
+        {/* Main Page Content (Header Removed) */}
+        <PageWrapper className="page-wrapper">
+          <Container 
+            sx={{
+              paddingTop: "24px",
+              paddingBottom: "24px",
+              maxWidth: '1400px',
+            }}
+          >
+            <Box sx={{ minHeight: 'calc(100vh - 120px)' }}>
+              <Outlet />
+            </Box>
+          </Container>
+          <Footer />
+        </PageWrapper>
+      </MainWrapper>
     </>
   );
 };

@@ -58,14 +58,12 @@ const Header = (props) => {
         <IconButton
           color='inherit'
           aria-label='menu'
-          onClick={props.toggleMobileSidebar}
+          onClick={props.toggleSidebar}
           sx={{
-            display: {
-              lg: 'none',
-              xs: 'inline',
-            },
+            display: 'inline-flex',
+            mr: 1
           }}>
-          <IconMenu width='20' height='20' />
+          <IconMenu width='22' height='22' />
         </IconButton>
 
         <Box>

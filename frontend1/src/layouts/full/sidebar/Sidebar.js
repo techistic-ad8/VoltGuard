@@ -4,11 +4,9 @@ import Scrollbar from "../../../components/custom-scroll/Scrollbar";
 import Upgrade from './Upgrade'
 
 const Sidebar = (props) => {
-
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up("lg"));
-  const sidebarWidth = '270px';
-
-
+  const isCollapsed = !props.isSidebarOpen;
+  const sidebarWidth = isCollapsed ? '80px' : '270px';
 
   if (lgUp) {
     return (
@@ -16,40 +14,34 @@ const Sidebar = (props) => {
         sx={{
           width: sidebarWidth,
           flexShrink: 0,
+          transition: 'width 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
         }}
       >
-        {/* ------------------------------------------- */}
-        {/* Sidebar for desktop */}
-        {/* ------------------------------------------- */}
         <Drawer
           anchor="left"
-          open={props.isSidebarOpen}
+          open={true}
           variant="permanent"
           slotProps={{
             paper: {
               sx: {
                 width: sidebarWidth,
                 boxSizing: 'border-box',
-                top: '72px',
+                top: '0px',
+                transition: 'width 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+                overflowX: 'hidden',
+                borderRight: '1px solid rgba(0, 0, 0, 0.08)',
               },
             }
           }}
         >
-          {/* ------------------------------------------- */}
-          {/* Sidebar Box */}
-          {/* ------------------------------------------- */}
-          <Scrollbar sx={{ height: "calc(100% - 73px)" }}>
-            <Box>
-              {/* ------------------------------------------- */}
-              {/* Sidebar Items */}
-              {/* ------------------------------------------- */}
-              <SidebarItems />
-            </Box>
+          <Scrollbar sx={{ height: "100%" }}>
+            <SidebarItems isCollapsed={isCollapsed} toggleSidebar={props.toggleSidebar} />
           </Scrollbar>
-        </Drawer >
-      </Box >
+        </Drawer>
+      </Box>
     );
   }
+
   return (
     <Drawer
       anchor="left"
@@ -59,19 +51,15 @@ const Sidebar = (props) => {
       slotProps={{
         paper: {
           sx: {
-
+            width: '270px',
             boxShadow: (theme) => theme.shadows[8],
           },
         }
       }}
     >
-      <Scrollbar sx={{ height: "calc(100% - 73px)" }}>
-        {/* ------------------------------------------- */}
-        {/* Sidebar For Mobile */}
-        {/* ------------------------------------------- */}
-        <SidebarItems />
+      <Scrollbar sx={{ height: "100%" }}>
+        <SidebarItems isCollapsed={false} />
       </Scrollbar>
-      <Upgrade />
     </Drawer>
   );
 };

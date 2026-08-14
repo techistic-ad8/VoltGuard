@@ -2,7 +2,20 @@ import React from 'react';
 import { Box, Typography, Chip } from '@mui/material';
 import { IconShieldCheck } from '@tabler/icons-react';
 
-const Upgrade = () => {
+const Upgrade = ({ isCollapsed }) => {
+    if (isCollapsed) {
+        return (
+            <Box display="flex" justifyContent="center" my={2}>
+                <Chip 
+                    icon={<IconShieldCheck size={16} />}
+                    label="OK"
+                    color="success" 
+                    size="small" 
+                    sx={{ width: 44, height: 26, fontSize: 10, fontWeight: 700, px: 0, justifyContent: 'center' }} 
+                />
+            </Box>
+        );
+    }
     return (
         <Box
             display={'flex'}

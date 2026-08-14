@@ -32,6 +32,16 @@ This document contains a log of all modifications, updates, and files added duri
   * Updated `Footer.js` to `© 2026 VoltGuard Smart Energy Surveillance System. Power Grid Security Division.`
   * Updated `index.html` page title to `VoltGuard | Smart Meter & Power Grid Security System`.
 
+### 4. Headbar Removal, Custom VoltGuard Security Logo & Collapsible Sidebar Menu
+* **[REMOVE] Removed Top Floating Headbar**:
+  * Removed `<Header />` from `FullLayout.js` to create a top-aligned, spacious dashboard layout without an empty top bar.
+* **[MODIFY] Custom VoltGuard Security Logo ([Logo.js](file:///d:/Springboot%20Project/frontend1/src/layouts/full/shared/logo/Logo.js))**:
+  * Updated logo to match exact user reference image: Blue outline shield checkmark icon (`IconShieldCheck`), `VoltGuard Security` blue header text, and `POWER SECURITY` subtitle.
+* **[FEAT] Collapsible Sidebar Menu ([Sidebar.js](file:///d:/Springboot%20Project/frontend1/src/layouts/full/sidebar/Sidebar.js) & [SidebarItems.js](file:///d:/Springboot%20Project/frontend1/src/layouts/full/sidebar/SidebarItems.js))**:
+  * Added a sleek inline minimize/expand button (`<IconButton onClick={toggleSidebar}>`) in the logo header.
+  * Replaced `react-mui-sidebar` with clean `@mui/material` `List`, `ListItemButton`, `ListItemIcon`, `ListItemText`, and `Tooltip` components for smooth 270px to 80px collapse transitions.
+  * In collapsed mode, item labels and subheaders shrink to icon-only mode with right-side tooltip popups showing tab titles on hover.
+
 ---
 
 ## Individual Git Commits Record
@@ -48,3 +58,4 @@ This document contains a log of all modifications, updates, and files added duri
 11. `95926f7` - `feat(frontend): restructure react app to frontend1 and fix vite dev server launch`
 12. `f06ccc5` - `fix(frontend): update MUI dependency versions to stable v6.4.3`
 13. `feat(frontend): remove AdminMart promotional elements and apply full VoltGuard branding`
+14. `feat(frontend): remove top headbar, update logo to reference design, and implement collapsible menu`
