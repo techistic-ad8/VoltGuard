@@ -42,6 +42,12 @@ This document contains a log of all modifications, updates, and files added duri
   * Replaced `react-mui-sidebar` with clean `@mui/material` `List`, `ListItemButton`, `ListItemIcon`, `ListItemText`, and `Tooltip` components for smooth 270px to 80px collapse transitions.
   * In collapsed mode, item labels and subheaders shrink to icon-only mode with right-side tooltip popups showing tab titles on hover.
 
+### 5. Current Disparity Analysis Chart Y-Axis Formatting Fix
+* **[FIX] [CurrentDisparityChart.js](file:///d:/Springboot%20Project/frontend1/src/views/dashboard/components/CurrentDisparityChart.js)**:
+  * Added `yaxis.labels.formatter` to format values as clean 1-decimal numbers with units (`val.toFixed(1) A`), eliminating float precision issues like `10.0000000000000000000000`.
+  * Rounded `phaseCurrent`, `neutralCurrent`, and `Math.abs(phaseCurrent - neutralCurrent)` values to 2 decimal places.
+  * Replaced raw math expression in card subtitle with clean text (`|Ip - In|`).
+
 ---
 
 ## Individual Git Commits Record
@@ -58,4 +64,5 @@ This document contains a log of all modifications, updates, and files added duri
 11. `95926f7` - `feat(frontend): restructure react app to frontend1 and fix vite dev server launch`
 12. `f06ccc5` - `fix(frontend): update MUI dependency versions to stable v6.4.3`
 13. `feat(frontend): remove AdminMart promotional elements and apply full VoltGuard branding`
-14. `feat(frontend): remove top headbar, update logo to reference design, and implement collapsible menu`
+14. `c56dbd2` - `feat(frontend): remove top headbar, update logo to reference design, and implement collapsible menu`
+15. `fix(frontend): format CurrentDisparityChart Y-axis labels to fixed decimals`
