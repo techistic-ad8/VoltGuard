@@ -6,8 +6,11 @@ This document contains a log of all modifications, updates, and files added duri
 
 ## Summary of Changes
 
-### 1. Modernize-React-Lite Material-UI Dashboard Customization
-* **[NEW] [Vite Proxy Configuration](file:///d:/Springboot%20Project/modernize-react-lite-main/package/vite.config.js)**: Configured `/api` proxy mapping requests to Spring Boot on `http://localhost:8085`.
+### 1. Modernize-React-Lite Vite Server Port Adjustment
+* **[MODIFY] [vite.config.js](file:///d:/Springboot%20Project/modernize-react-lite-main/package/vite.config.js)**
+  * *Change*: Updated Vite dev server port to `5173` to prevent port collision with the Next.js dev server on port `3000`.
+
+### 2. Modernize-React-Lite Material-UI Dashboard Customization
 * **[NEW] [VoltGuard Branding & Navigation](file:///d:/Springboot%20Project/modernize-react-lite-main/package/src/layouts/full/shared/logo/Logo.js)**: Updated logo to VoltGuard Govt Power Security. Updated sidebar menu items in `MenuItems.js` for Overview, Meter Inventory, Live Telemetry, Work Orders, and H2 Console.
 * **[NEW] [CurrentDisparityChart.js](file:///d:/Springboot%20Project/modernize-react-lite-main/package/src/views/dashboard/components/CurrentDisparityChart.js)**: ApexCharts line graph rendering Phase Current ($I_p$), Neutral Current ($I_n$), and Current Disparity ($|I_p - I_n|$).
 * **[NEW] [TamperAlertSummary.js](file:///d:/Springboot%20Project/modernize-react-lite-main/package/src/views/dashboard/components/TamperAlertSummary.js)**: Material-UI stat cards for Monitored Meters, Tampered Meters, Grid Voltage, and Active Work Orders.
@@ -29,4 +32,5 @@ This document contains a log of all modifications, updates, and files added duri
 7. `4d9a97a` - `feat(modernize): add TelemetrySimulator form component`
 8. `11cb97c` - `feat(modernize): add WorkOrdersPanel component`
 9. `9bd3126` - `feat(modernize): integrate VoltGuard components into Dashboard view`
-10. Pending - `docs: update master documentation and changelog for Modernize dashboard`
+10. `5185c2a` - `docs: update master documentation and changelog for Modernize dashboard`
+11. Pending - `fix(vite): change Vite dev port to 5173 to avoid conflict with Next.js`
