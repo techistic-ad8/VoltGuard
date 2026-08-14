@@ -26,9 +26,7 @@ const Dashboard = () => {
 
       if (Array.isArray(mRes)) {
         setMeters(mRes);
-        if (mRes.length > 0 && !selectedMeterId) {
-          setSelectedMeterId(mRes[0].meterId);
-        }
+        setSelectedMeterId(prev => prev || (mRes.length > 0 ? mRes[0].meterId : ''));
       }
       if (Array.isArray(rRes)) setReadings(rRes);
       if (Array.isArray(wRes)) setWorkOrders(wRes);

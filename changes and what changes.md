@@ -55,6 +55,10 @@ This document contains a log of all modifications, updates, and files added duri
 * **[LAYOUT] [Dashboard.js](file:///d:/Springboot%20Project/frontend1/src/views/dashboard/Dashboard.js)**:
   * Re-allocated Grid columns: increased `TelemetrySimulator` from 4 to 5 columns (`lg={5}`) and paired it side-by-side with `CurrentDisparityChart` (`lg={7}`) for a spacious layout.
 
+### 7. Stale Closure Selected Meter Reset Fix
+* **[FIX] [Dashboard.js](file:///d:/Springboot%20Project/frontend1/src/views/dashboard/Dashboard.js)**:
+  * Fixed stale closure issue in 3-second `setInterval` polling by using functional state update `setSelectedMeterId(prev => prev || ...)` so user's manual meter selection is preserved during live updates.
+
 ---
 
 ## Individual Git Commits Record
@@ -72,5 +76,6 @@ This document contains a log of all modifications, updates, and files added duri
 12. `f06ccc5` - `fix(frontend): update MUI dependency versions to stable v6.4.3`
 13. `feat(frontend): remove AdminMart promotional elements and apply full VoltGuard branding`
 14. `c56dbd2` - `feat(frontend): remove top headbar, update logo to reference design, and implement collapsible menu`
-15. `fix(frontend): format CurrentDisparityChart Y-axis labels to fixed decimals`
-16. `refactor(frontend): expand TelemetrySimulator layout to eliminate claustrophobic form fields`
+15. `c7712d1` - `fix(frontend): format CurrentDisparityChart Y-axis labels to fixed decimals`
+16. `d8674a8` - `refactor(frontend): expand TelemetrySimulator layout to eliminate claustrophobic form fields`
+17. `fix(frontend): prevent automatic polling reset of selected meter ID`
