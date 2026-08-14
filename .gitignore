@@ -1,9 +1,54 @@
+# Target directory
 target/
 !.mvn/wrapper/maven-wrapper.jar
-!**/src/main/resources/components/
-!**/src/test/resources/components/
+!.**/src/main/resources/components/
+!.**/src/test/resources/components/
 
-### STS ###
+# Data Files & Sensitive Datasets
+*.csv
+*.csv.gz
+*.gz
+*.zip
+*.dat
+*.dump
+*.sql
+*.parquet
+
+# Database files
+*.db
+*.h2.db
+*.mv.db
+*.trace.db
+
+# Data directories
+data/
+datasets/
+imports/
+exports/
+
+# Environment and Secrets
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Next.js build output
+frontend/.next/
+frontend/out/
+
+# Logs & Temp files
+log/
+*.log
+hs_err_pid*
+replay_pid*
+
+# IDEs
+.idea/
+*.iws
+*.iml
+*.ipr
+.vscode/
 .apt_generated
 .classpath
 .factorypath
@@ -11,22 +56,7 @@ target/
 .settings
 .springBeans
 .sts4-cache
-
-### IntelliJ IDEA ###
-.idea/
-*.iws
-*.iml
-*.ipr
-
-### NetBeans ###
 /nbproject/private/
 /nbbuild/
 /dist/
 /nbproject/spring-file-reloading-map.xml
-
-### VS Code ###
-.vscode/
-
-### Operating System ###
-log/
-*.log
