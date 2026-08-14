@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VoltGuard | Smart Grid Monitoring Dashboard</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <i data-lucide="shield-alert" class="brand-icon"></i>
+                <div class="brand-text">
+                    <h1>VoltGuard</h1>
+                    <span>Grid Protection System</span>
+                </div>
+            </div>
+            
+            <nav class="nav-menu">
+                <a href="#overview" class="nav-item active">
+                    <i data-lucide="layout-dashboard"></i> Overview
+                </a>
+                <a href="#meters" class="nav-item">
+                    <i data-lucide="cpu"></i> Meter Inventory
+                </a>
+                <a href="#telemetry" class="nav-item">
+                    <i data-lucide="activity"></i> Live Telemetry
+                </a>
+                <a href="#work-orders" class="nav-item">
+                    <i data-lucide="wrench"></i> Work Orders
+                    <span class="badge badge-alert" id="work-orders-badge" style="display: none;">0</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="system-status">
+                    <span class="pulse-dot green"></span>
+                    <span>System Online</span>
+                </div>
+                <div class="server-port">Port: 8085 (H2 Mode)</div>
+            </div>
+        </aside>
+
+        <!-- Main Dashboard Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="top-header">
+                <div class="header-title">
+                    <h2>Substation Monitoring Console</h2>
+                    <p>Real-time analytics, tampering alerts, and maintenance tickets.</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" id="btn-refresh">
+                        <i data-lucide="refresh-cw"></i> Refresh Data
+                    </button>
+                    <div class="avatar-container">
+                        <div class="avatar">AD</div>
+                        <span>Admin Operator</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Metrics Cards Grid -->
+            <section class="metrics-grid">
+                <div class="metric-card">
+                    <div class="card-icon blue">
+                        <i data-lucide="cpu"></i>
+                    </div>
+                    <div class="card-data">
+                        <span class="card-label">Total Monitored Meters</span>
+                        <h3 class="card-value" id="stat-total-meters">0</h3>
+                    </div>
+                </div>
+                
+                <div class="metric-card alert">
+                    <div class="card-icon red">
+                        <i data-lucide="alert-triangle"></i>
+                    </div>
+                    <div class="card-data">
+                        <span class="card-label">Tampered / Flagged</span>
+                        <h3 class="card-value" id="stat-tampered-meters">0</h3>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="card-icon green">
+                        <i data-lucide="zap"></i>
+                    </div>
+                    <div class="card-data">
+                        <span class="card-label">Average Voltage</span>
+                        <h3 class="card-value" id="stat-avg-voltage">0 V</h3>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="card-icon purple">
+                        <i data-lucide="check-circle-2"></i>
+                    </div>
+                    <div class="card-data">
+                        <span class="card-label">Active Work Orders</span>
+                        <h3 class="card-value" id="stat-active-orders">0</h3>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Dashboard Body Layout -->
+            <div class="dashboard-body">
+                <!-- Left Section: Live Alerts & Simulator -->
+                <div class="body-left">
+                    <!-- Simulator Form Card -->
+                    <div class="panel-card glass">
+                        <div class="panel-header">
+                            <div class="panel-title-group">
+                                <i data-lucide="sliders" class="panel-icon orange"></i>
+                                <h4>Meter Telemetry Simulator</h4>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <form id="simulator-form" class="sim-form">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="sim-meter-id">Meter Badge / ID</label>
+                                        <select id="sim-meter-id" required>
+                                            <option value="" disabled selected>Select a meter...</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="sim-voltage">Voltage (V)</label>
+                                        <input type="number" step="0.1" id="sim-voltage" value="230.0" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="sim-energy">Active Energy (kWh)</label>
+                                        <input type="number" step="0.01" id="sim-energy" value="5.24" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="sim-phase">Phase Current (Ip - A)</label>
+                                        <input type="number" step="0.01" id="sim-phase" value="5.0" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="sim-neutral">Neutral Current (In - A)</label>
+                                        <input type="number" step="0.01" id="sim-neutral" value="5.0" required>
+                                    </div>
+                                    <div class="form-group flex-align-end">
+                                        <button type="button" class="btn btn-warning btn-full" id="btn-simulate-tamper">
+                                            <i data-lucide="flame"></i> Auto-Tamper
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary btn-full">
+                                    <i data-lucide="radio-tower"></i> Broadcast Simulated Ping
+                                </button>
+                            </form>
+                            <div id="sim-toast" class="toast hidden">Ping sent!</div>
+                        </div>
+                    </div>
+
+                    <!-- Work Orders Management Panel -->
+                    <div class="panel-card glass" id="sec-work-orders">
+                        <div class="panel-header">
+                            <div class="panel-title-group">
+                                <i data-lucide="wrench" class="panel-icon crimson"></i>
+                                <h4>Active Work Orders</h4>
+                            </div>
+                            <span class="panel-count-tag red" id="count-active-orders">0 Open</span>
+                        </div>
+                        <div class="panel-body work-orders-list scrollbar-styled" id="work-orders-container">
+                            <div class="empty-state">
+                                <i data-lucide="shield-check" class="empty-icon text-success"></i>
+                                <p>All clear! No open work orders detected.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Section: Charts & Tables -->
+                <div class="body-right">
+                    <!-- Chart Panel -->
+                    <div class="panel-card glass">
+                        <div class="panel-header">
+                            <div class="panel-title-group">
+                                <i data-lucide="trending-up" class="panel-icon blue"></i>
+                                <h4>Energy Baseline vs. Actual readings</h4>
+                            </div>
+                        </div>
+                        <div class="panel-body chart-wrapper">
+                            <canvas id="energy-chart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Meters Grid Panel -->
+                    <div class="panel-card glass" id="sec-meters">
+                        <div class="panel-header">
+                            <div class="panel-title-group">
+                                <i data-lucide="cpu" class="panel-icon purple"></i>
+                                <h4>Meter Inventory</h4>
+                            </div>
+                            <div class="panel-search">
+                                <input type="text" id="search-meters" placeholder="Search by Badge ID...">
+                                <i data-lucide="search" class="search-icon"></i>
+                            </div>
+                        </div>
+                        <div class="panel-body table-wrapper scrollbar-styled max-h-350">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Badge / ID</th>
+                                        <th>Status</th>
+                                        <th>Baseline (Daily)</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="meters-table-body">
+                                    <tr>
+                                        <td colspan="4" class="table-loading">Loading meter inventory...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Telemetry Log Panel -->
+                    <div class="panel-card glass" id="sec-telemetry">
+                        <div class="panel-header">
+                            <div class="panel-title-group">
+                                <i data-lucide="activity" class="panel-icon green"></i>
+                                <h4>Live Telemetry Log</h4>
+                            </div>
+                        </div>
+                        <div class="panel-body table-wrapper scrollbar-styled max-h-350">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Meter ID</th>
+                                        <th>Timestamp</th>
+                                        <th>Energy (kWh)</th>
+                                        <th>Voltage</th>
+                                        <th>Phase Curr (Ip)</th>
+                                        <th>Neutral Curr (In)</th>
+                                        <th>Current Delta</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="telemetry-table-body">
+                                    <tr>
+                                        <td colspan="7" class="table-loading">Awaiting telemetry broadcast...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Assign Engineer Modal -->
+    <div id="assign-modal" class="modal hidden">
+        <div class="modal-content glass">
+            <div class="modal-header">
+                <h3>Assign Substation Engineer</h3>
+                <button class="close-modal-btn" id="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="assign-form">
+                    <input type="hidden" id="modal-work-order-id">
+                    <div class="form-group">
+                        <label for="engineer-name">Select Engineer</label>
+                        <select id="engineer-name" required>
+                            <option value="Engineer Sarah Chen">Engineer Sarah Chen (Grid Specialist)</option>
+                            <option value="Engineer Marcus Aurelius">Engineer Marcus Aurelius (Substation Delta-1 Lead)</option>
+                            <option value="Engineer Dev Patel">Engineer Dev Patel (Hardware & Bypass tech)</option>
+                            <option value="Engineer Elena Rostova">Engineer Elena Rostova (Field Inspector)</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">Assign Engineer & Dispatch</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Script File -->
+    <script src="app.js"></script>
+</body>
+</html>
